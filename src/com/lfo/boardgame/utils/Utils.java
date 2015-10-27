@@ -64,21 +64,30 @@ public class Utils {
 		if(getInput(scanner)){
 			storage.isUsingMogana=true;
 		}
-		System.out.println("是否使用派希維爾?");
-		System.out.println("輸入 1:使用2:不用");
-		if(getInput(scanner)){
-			storage.isUsingPercival=true;
+		if(storage.isUsingMogana){
+			
+			System.out.println("是否使用派希維爾?");
+			System.out.println("輸入 1:使用2:不用");
+			if(getInput(scanner)){
+				storage.isUsingPercival=true;
+			}
 		}
-		System.out.println("是否使用莫德雷德?");
-		System.out.println("輸入 1:使用2:不用");
-		if(getInput(scanner)){
-			storage.isUsingMordred=true;
+		if(storage.totalplayers>7){
+			System.out.println("是否使用莫德雷德?");
+			System.out.println("輸入 1:使用2:不用");
+			if(getInput(scanner)){
+				storage.isUsingMordred=true;
+			}
 		}
-		System.out.println("是否使用奧伯龍?");
-		System.out.println("輸入 1:使用2:不用");
-		if(getInput(scanner)){
-			storage.isUsingOberyn=true;
+	
+		if(storage.totalplayers>7){
+			System.out.println("是否使用奧伯龍?");
+			System.out.println("輸入 1:使用2:不用");
+			if(getInput(scanner)){
+				storage.isUsingOberyn=true;
+			}
 		}
+	
 			
 		
 	}

@@ -428,7 +428,7 @@ public class Main {
 				return;
 			}
 			if (p.getPart().equals(Part.merlin)) {
-				System.out.println("你是梅林 ;你知道所有人的陣營但是你不可以被壞人猜到身份");
+				System.out.println("你是梅林 ;你不可以被壞人猜到身份");
 				maylinlookup(p,playerlist);
 			}
 			if (p.getPart().equals(Part.percival)) {
@@ -465,11 +465,12 @@ public class Main {
 	}
 
 	private static void percivallookup(ArrayList<Player> playerlist) {	
+		System.out.println("這兩個人是魔甘娜或梅林? :");
 		for (Player np : playerlist) {
 			if(np.getPart()==null){
 				continue;
 			}
-			System.out.println("他們是魔甘娜或梅林? :");
+			
 			if (np.getPart().equals(Part.morgana)) {
 				System.out.println(np.getName());
 			}
