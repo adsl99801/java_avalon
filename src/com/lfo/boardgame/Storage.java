@@ -8,6 +8,8 @@ public class Storage {
 
 	public  ArrayList<Player> playerlist = new ArrayList<>();
 	public  ArrayList<Player> notAvalibleLakelist = new ArrayList<>();//不可以被使用湖中女神的名單
+	public  int maxjustice=3;
+	public  int maxevil=2;
 	public  int lakeLadyPlayerNo=0;
 	public final int totalMissions=5;
 	public Player nowlakeLadyPlayer=null;

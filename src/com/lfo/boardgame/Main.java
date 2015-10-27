@@ -2,6 +2,10 @@ package com.lfo.boardgame;
 
 import java.util.*;
 import java.util.concurrent.*;
+
+import com.lfo.boardgame.utils.Print;
+import com.lfo.boardgame.utils.Utils;
+
 import java.math.*;
 
 public class Main {
@@ -10,9 +14,11 @@ public class Main {
 	public final static  int informationcommand = 111;
 	
 	public static Utils utils;
+	public static Print print;
 	public static void main(String[] args) {
 		
 		Storage storage=new Storage();
+		 print=new Print();
 		utils = new Utils(storage);
 		System.out.println("請輸入遊玩人數:5,6,7,8,9,10人");
 		utils.initTotalPlayers();
@@ -37,7 +43,7 @@ public class Main {
 			assignedList = kingAssignPlayers(scanners[4], storage.missionScoreBoard,playerlist, arthurKing, mission[round - 1]);
 
 			System.out.println("請每位玩家開始投票:是否贊成此出任務名單?(若否決票達一半則亞瑟王換下一位)");
-			boolean cangetmission = voteMissionAssignList(scanners[4],playerlist,assignedList);
+			boolean cangetmission = voteMissionAssignList(utils,assignedList);
 
 			if (!cangetmission) {
 
@@ -72,9 +78,9 @@ public class Main {
 			
 			if (round == storage.totalMissions) {
 				isOver = true;
-				printmutiline(15);
+				print.printmutiline(15);
 				System.out.println("滿五局 遊戲結束");
-				printmissionboard(storage.missionScoreBoard);
+				print.printmissionboard(storage.missionScoreBoard);
 
 			}
 			round++;
@@ -92,6 +98,10 @@ public class Main {
 		if(utils.getTotalPlayers()<7){
 			return;
 		}
+		if(round>4){
+			System.out.println("只能在2 3 4局使用湖中女神");
+			return;
+		}
 		if(round>=2){
 			Player p=utils.getLakeLadyPlayer(round,arthurKing.getNo());
 			useLakelady(utils,p);
@@ -107,7 +117,7 @@ public class Main {
 			list=utils.getAvalibleLakelist(usep);
 			System.out.println("請"+usep.getName()+"使用湖中女神的能力!(查看一個玩家的陣營)");
 			System.out.println("提示:被查看過的玩家不能再被使用湖中女神能力了!");
-			printNoNamelist(list);
+			print.printNoNamelist(list);
 			try {
 				input=scanner.nextInt();
 			} catch (Exception e) {
@@ -116,6 +126,10 @@ public class Main {
 				continue;
 			}
 			Player picked=utils.getPlayerBy(input);
+			if(!utils.isInlist(picked, list)){
+				System.out.println("提示:被查看過的玩家不能再被使用湖中女神能力了!");
+				continue;
+			}
 			System.out.println(picked.getNo()+"."+picked.getName()+"的陣營是"+picked.getC().toString());
 			utils.setLakeLadyPlayer(picked);//將湖中女神轉交給被使用的玩家
 			isused=true;
@@ -126,7 +140,7 @@ public class Main {
 		} catch (Exception e) {
 			scanner.nextLine();
 		}finally{
-			printmutiline(15);
+			print.printmutiline(15);
 		}
 		
 	}
@@ -138,11 +152,12 @@ public class Main {
 
 		int choosesum = 0;
 		Player np = null;
+		boolean isassignover=false;
 
-		while (choosesum < totalMissionPlayers) {
+		while (!isassignover) {
 
 			System.out.println("請亞瑟王:" + king.getName() + " 選擇要指派的玩家(輸入該玩家號碼) " + informationcommand + "可以得到資訊");
-			printNoNamelist(playerlist);
+			print.printNoNamelist(playerlist);
 			System.out.println("正在指派第" + (choosesum + 1) + "/" + totalMissionPlayers + "位");
 			int pick = -1;
 			try {
@@ -175,10 +190,13 @@ public class Main {
 				System.out.println("你選了:" + np.getName());
 
 			}
+			if(choosesum == totalMissionPlayers){
+				isassignover=true;
+			}
 
 		}
 		System.out.println("出任務名單為:");
-		printNoNamelist(assignedList);
+		print.printNoNamelist(assignedList);
 		return assignedList;
 
 	}
@@ -199,9 +217,13 @@ public class Main {
 				System.out.println("");
 				for (Player p : playerlist) {
 					System.out.print(p.getNo() + "." + p.getName() + "角色:" + p.getC().toString());
-					if (p.getPart().equals(Part.merlin)) {
-						System.out.print(";是梅林");
+					if(p.getPart()!=null){
+						System.out.print(p.getPart().toString());
+						if (p.getPart().equals(Part.merlin)) {
+							System.out.print(";是梅林");
+						}
 					}
+					
 					System.out.println("");
 
 				}
@@ -213,39 +235,7 @@ public class Main {
 
 	}
 
-	public static boolean voteMissionAssignList(Scanner scanner,ArrayList<Player> assignlist,ArrayList<Player> playerlist) {
-		ArrayList<Player> votelist = new ArrayList<>();
-		for (Player p : playerlist) {
-			printmutiline(15);
-			System.out.println("出任務名單為:");
-			printNoNamelist(assignlist);
-			System.out.println("現在，" + p.getName() + "請投票");
-			System.out.println("輸入 1:贊成;2:反對  ;" + informationcommand + "可以得到資訊");
-			int nextint = -1;
-			boolean isvoted = false;
-			while (!isvoted) {
-				try {
-					nextint = scanner.nextInt();
-				} catch (Exception e) {
-					System.out.println("不符合預期的輸入");
-					scanner.nextLine();
-					continue;
 
-				}
-				if (lookupwhen(p, nextint,playerlist)) {
-					System.out.println("輸入 1:贊成;2:反對  ;" + informationcommand + "可以得到資訊");
-					continue;
-				}
-				isvoted = true;
-			}
-			votelist = insertvoteto(votelist, p, nextint);
-
-		}
-
-		boolean cangetmission = voteresultandprint(votelist);
-		return cangetmission;
-
-	}
 
 	
 	public static int nextking(int kingindex) {
@@ -261,9 +251,12 @@ public class Main {
 		int round = 1;
 		int jscore = 0;
 		int escore = 0;
-		printmutiline(15);
-		System.out.println("戰況公佈!");
-
+		print.printmutiline(15);
+		if(board[0]!=null){
+			System.out.println("目前戰況:");
+		}
+		
+		
 		for (Camp c : board) {
 			if (c == null) {
 				break;
@@ -289,34 +282,7 @@ public class Main {
 		return false;
 	}
 
-	public static void printmissionboard(Camp[] board) {
 
-		System.out.println("戰況公佈!");
-		int round = 1;
-		for (Camp c : board) {
-			if (c != null) {
-				System.out.println("第" + round + "局:" + c.toString() + "獲勝");
-
-			}
-			round++;
-		}
-	}
-
-	public static boolean lookupwhen(Player p, int pvote,ArrayList<Player> playerlist) {
-		if (pvote != informationcommand) {
-			return false;
-		}
-		if (p.getC().equals(Camp.justice)) {
-			System.out.println("你是好人");
-			if (p.getPart().equals(Part.merlin)) {
-				maylinlookup(p,playerlist);
-			}
-		}
-		if (p.getC().equals(Camp.evil)) {
-			evillookup(p,playerlist);
-		}
-		return true;
-	}
 
 	public static ArrayList<Player> insertvoteto(ArrayList<Player> list, Player p, int pvote) {
 		if (pvote == 1) {
@@ -332,14 +298,14 @@ public class Main {
 	public static boolean domission(Camp[] missionboard,Scanner[] scanners, ArrayList<Player> list,int disagreemissioncri) {
 		System.out.println("任務開始了!");
 		System.out.println("人員為:");
-		printNoNamelist(list);
+		print.printNoNamelist(list);
 		int domissionindex = 0;
 		boolean ismissionvoted = false;
 		int input = 111;
 		// System.out.println("size"+list.size());
 		for (Player p : list) {
 			ismissionvoted = false;
-			printmutiline(15);
+			print.printmutiline(15);
 			System.out.println("現在,輪到" + p.getName());
 			System.out.println("請選擇 1:任務成功  2:任務失敗 或111查看資訊");
 			while (!ismissionvoted) {
@@ -415,30 +381,67 @@ public class Main {
 		return true;
 	}
 
-	public static void printNoNamelist(ArrayList<Player> list) {
+	public static  boolean voteMissionAssignList(Utils utils,ArrayList<Player> assignlist) {
+		ArrayList<Player> votelist = new ArrayList<>();
+		ArrayList<Player> playerlist=utils.getPlayerlist();
+		for (Player p : playerlist) {
+			print.printmutiline(15);
+			System.out.println("出任務名單為:");
+			print.printNoNamelist(assignlist);
+			System.out.println("現在，" + p.getName() + "請投票");
+			System.out.println("輸入 1:贊成;2:反對  ;" + informationcommand + "可以得到資訊");
+			int nextint = -1;
+			boolean isvoted = false;
+			Scanner scanner =utils.getScanner();
+			while (!isvoted) {
+				try {
+					nextint = scanner.nextInt();
+				} catch (Exception e) {
+					System.out.println("不符合預期的輸入");
+					scanner.nextLine();
+					continue;
 
-		for (Player p : list) {
-			System.out.println(p.getNo() + "." + p.getName());
+				}
+				if (nextint==informationcommand) {
+					lookup(utils.getMissionScoreBoard(), p, playerlist);
+					continue;
+				}
+				isvoted = true;
+			}
+			votelist = insertvoteto(votelist, p, nextint);
 
 		}
+
+		boolean cangetmission = voteresultandprint(votelist);
+		return cangetmission;
 
 	}
 
 	public static void lookup(Camp[] missionboard,Player p,ArrayList<Player> playerlist) {
-		printmissionboard(missionboard);
+		print.printmissionboard(missionboard);
 		if (p.getC().equals(Camp.justice)) {
 			System.out.println("你是好人");
+			if(p.getPart()==null){
+				return;
+			}
 			if (p.getPart().equals(Part.merlin)) {
+				System.out.println("你是梅林 ;你知道所有人的陣營但是你不可以被壞人猜到身份");
 				maylinlookup(p,playerlist);
 			}
 			if (p.getPart().equals(Part.percival)) {
+				System.out.println("你是派希維爾 ;你知道梅林和魔甘娜是誰");
 				percivallookup(playerlist);
 			}
 		} else {
+			evillookup(p,playerlist);
+			if(p.getPart()==null){
+				return;
+			}
 			if (p.getPart().equals(Part.morgana)) {
+				System.out.println("你是魔甘娜 ;你知道所有人的陣營");
 				morganalookup(p,playerlist);
 			}
-			evillookup(p,playerlist);
+			
 			
 			
 		}
@@ -450,6 +453,9 @@ public class Main {
 
 	private static void percivallookup(ArrayList<Player> playerlist) {	
 		for (Player np : playerlist) {
+			if(np.getPart()==null){
+				continue;
+			}
 			if (np.getPart().equals(Part.morgana)) {
 				System.out.println(np.getName() + ":" +Part.morgana.toString());
 			}
@@ -470,15 +476,11 @@ public class Main {
 	}
 
 	public static void maylinlookup(Player maylin,ArrayList<Player> playerlist) {
-		System.out.println("你是梅林 ;你知道所有人的身份但是你不可以被壞人猜到身份");
+		
 		for (Player p : playerlist) {
 			System.out.println(p.getName() + ":" + p.getC().toString());
 		}
 	}
 
-	public static void printmutiline(int lines) {
-		for (int i = 0; i < lines; i++) {
-			System.out.println("");
-		}
-	}
+	
 }
