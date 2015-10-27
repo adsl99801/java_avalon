@@ -5,7 +5,6 @@ import java.util.concurrent.*;
 
 import com.lfo.boardgame.utils.Print;
 import com.lfo.boardgame.utils.Utils;
-
 import java.math.*;
 
 public class Main {
@@ -64,6 +63,7 @@ public class Main {
 
 			int disagreemissioncri=utils.getDisagreeMissionCri(round);
 			ismissionpass = domission(storage.missionScoreBoard,scanners, assignedList,disagreemissioncri);
+			
 			if (ismissionpass) {
 				storage.missionScoreBoard[round - 1] = Camp.justice;
 				System.out.println("任務成功!");
@@ -71,6 +71,8 @@ public class Main {
 				storage.missionScoreBoard[round - 1] = Camp.evil;
 				System.out.println("任務失敗");
 			}
+			utils.printNowMissionCard();
+			utils.printVotelist();
 			isOver = isoverandprint(storage.missionScoreBoard);
 			if (isOver) {
 				break;
@@ -252,7 +254,7 @@ public class Main {
 		int round = 1;
 		int jscore = 0;
 		int escore = 0;
-		print.printmutiline(15);
+		
 		if(board[0]!=null){
 			System.out.println("目前戰況:");
 		}
@@ -306,9 +308,10 @@ public class Main {
 		// System.out.println("size"+list.size());
 		for (Player p : list) {
 			ismissionvoted = false;
-			print.printmutiline(15);
+			
 			System.out.println("現在,輪到" + p.getName());
 			System.out.println("請選擇 1:任務成功  2:任務失敗 或111查看資訊");
+			
 			while (!ismissionvoted) {
 				try {
 
@@ -331,16 +334,17 @@ public class Main {
 				}
 				if (p.getC().equals(Camp.evil)) {
 					if (input == 1) {
-						p.setIsAgree(true);
+						p.setIsMissionAgree(true);
 					} else {
-						p.setIsAgree(false);
+						p.setIsMissionAgree(false);
 					}
 
 				} else {
-					p.setIsAgree(true);
+					p.setIsMissionAgree(true);
 				}
 				ismissionvoted = true;
 				System.out.println("已選擇");
+				print.printmutiline(15);
 
 			}
 			domissionindex++;
@@ -354,11 +358,17 @@ public class Main {
 
 	public static boolean isdisagreeovercri(ArrayList<Player> list, int cri) {
 		int sumofdisagree = 0;
+		int sumAgree=0;
 		for (Player p : list) {
-			if (!p.isAgree()) {
+			if (p.isMissionAgree()) {
+				sumAgree++;
+			}else{
+				
 				sumofdisagree++;
 			}
 		}
+		utils.setMissionSusCardSum(sumAgree);
+		utils.setMissionFailCardSum(sumofdisagree);
 		if (sumofdisagree >= 1) {
 			return true;
 		}
@@ -411,7 +421,9 @@ public class Main {
 				}
 				isvoted = true;
 			}
+			print.printmutiline(15);
 			votelist = insertvoteto(votelist, p, nextint);
+			utils.setVotelist(votelist);
 
 		}
 

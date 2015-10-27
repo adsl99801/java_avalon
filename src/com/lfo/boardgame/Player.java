@@ -6,12 +6,21 @@ public class Player {
 	private String name;
 	private int point;
 	private Camp c;
-	private boolean isAgree = true;
+	private boolean isVoteAgree = true;
+	private boolean isMissionAgree = true;
 	private Part part;
 	
 	public Player(int no, String name) {
 		this.no = no;
 		this.name = name;
+	}
+
+	public void setIsMissionAgree(boolean isMissionAgree) {
+		this.isMissionAgree = isMissionAgree;
+	}
+
+	public boolean isMissionAgree() {
+		return isMissionAgree;
 	}
 
 	public Part getPart() {
@@ -23,11 +32,11 @@ public class Player {
 	}
 
 	public void setIsAgree(boolean isAgree) {
-		this.isAgree = isAgree;
+		this.isVoteAgree = isAgree;
 	}
 
 	public boolean isAgree() {
-		return isAgree;
+		return isVoteAgree;
 	}
 
 

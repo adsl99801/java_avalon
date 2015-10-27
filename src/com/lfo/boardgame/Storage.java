@@ -10,7 +10,9 @@ public class Storage {
 	public boolean isUsingMogana=false;
 	public boolean isUsingOberyn=false;
 	public boolean isUsingPercival=false;
-	
+	public  ArrayList<Player> votelist = new ArrayList<>();
+	public  int missionSusCardSum = 0;//任務聖杯
+	public  int missionFailCardSum = 0;//任務聖杯
 	public  ArrayList<Player> playerlist = new ArrayList<>();
 	public  ArrayList<Player> notAvalibleLakelist = new ArrayList<>();//不可以被使用湖中女神的名單
 	public  int maxjustice=3;
@@ -38,4 +40,5 @@ public class Storage {
 		scanners[4] = s5;
 		missionScoreBoard = new Camp[totalMissions];
 	}
+
 }

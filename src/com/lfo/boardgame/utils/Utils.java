@@ -15,7 +15,40 @@ public class Utils {
 		this.storage = storage;
 	}
 
+	public void printNowMissionCard(){
+		System.out.println("成功卡數:"+getMissionSusCardSum()+",失敗卡數:"+getMissionFailCardSum());
+	}
+	public void setMissionFailCardSum(int missionFailCardSum) {
+		storage.missionFailCardSum = missionFailCardSum;
+	}
 
+	public int getMissionFailCardSum() {
+		return storage.missionFailCardSum;
+	}
+
+	public void setMissionSusCardSum(int missionSusCardSum) {
+		storage.missionSusCardSum = missionSusCardSum;
+	}
+
+	public int getMissionSusCardSum() {
+		return storage.missionSusCardSum;
+	}
+	public void printVotelist(){
+		
+		for (Player p : storage.votelist) {
+			System.out.print(p.getName() + ":");
+			if (!p.isAgree()) {
+				System.out.println("反對");
+				
+			} else {
+				System.out.println("贊成");
+				
+			}
+		}
+	}
+    public void setVotelist(ArrayList<Player> list){
+		storage.votelist=list;
+	}
 	public  Camp[] getMissionScoreBoard(){
 		return storage.missionScoreBoard;
 	}
@@ -234,7 +267,7 @@ public class Utils {
 					}
 					p.setC(Camp.justice);
 					sumofjustice++;
-					if (sumofjustice == 1) {
+					if (sumofjustice == 3) {
 						p.setPart(Part.merlin);
 					}
 					if(storage.isUsingPercival){
