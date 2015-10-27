@@ -6,6 +6,11 @@ import java.util.Scanner;
 public class Storage {
 	
 
+	public boolean isUsingMordred=false;
+	public boolean isUsingMogana=false;
+	public boolean isUsingOberyn=false;
+	public boolean isUsingPercival=false;
+	
 	public  ArrayList<Player> playerlist = new ArrayList<>();
 	public  ArrayList<Player> notAvalibleLakelist = new ArrayList<>();//不可以被使用湖中女神的名單
 	public  int maxjustice=3;

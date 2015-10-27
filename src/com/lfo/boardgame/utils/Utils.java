@@ -55,7 +55,49 @@ public class Utils {
 	public int getTotalPlayers(){
 		return storage.totalplayers;
 	}
+	public void initUsingPart(){
+		
+		Scanner scanner=getScanner();
+		
+		System.out.println("是否使用魔甘娜?");
+		System.out.println("輸入 1:使用2:不用");
+		if(getInput(scanner)){
+			storage.isUsingMogana=true;
+		}
+		System.out.println("是否使用派希維爾?");
+		System.out.println("輸入 1:使用2:不用");
+		if(getInput(scanner)){
+			storage.isUsingPercival=true;
+		}
+		System.out.println("是否使用莫德雷德?");
+		System.out.println("輸入 1:使用2:不用");
+		if(getInput(scanner)){
+			storage.isUsingMordred=true;
+		}
+		System.out.println("是否使用奧伯龍?");
+		System.out.println("輸入 1:使用2:不用");
+		if(getInput(scanner)){
+			storage.isUsingOberyn=true;
+		}
+			
+		
+	}
+	private boolean getInput(Scanner scanner){
+		int input =0;
+		try {
+			input=scanner.nextInt();
+		} catch (Exception e) {
+			getScanner().nextLine();
+			return false;
+			
+		}
+		if(input!=1){
+			return false;
+		}
+		return  true;
+	}
 	public void initTotalPlayers(){
+		System.out.println("請輸入遊玩人數:5,6,7,8,9,10人");
 		boolean isseted=false;
 		int input =0;
 		while(!isseted){
@@ -159,7 +201,7 @@ public class Utils {
 	}
 	
 	public  void initPlayersNameAndAllocate() {
-		
+		System.out.println("現在開始分配正義或邪惡角色!");
 		int sumofjustice = 0;
 		int sumofevil = 0;
 		storage.playerlist.clear();
@@ -186,9 +228,12 @@ public class Utils {
 					if (sumofjustice == 1) {
 						p.setPart(Part.merlin);
 					}
-					if (sumofjustice == 2) {
-						p.setPart(Part.percival);
+					if(storage.isUsingPercival){
+						if (sumofjustice == 2) {
+							p.setPart(Part.percival);
+						}
 					}
+					
 				} else {
 					if (sumofevil >= storage.maxevil) {
 						if (sumofjustice >= storage.maxjustice) {
@@ -198,16 +243,29 @@ public class Utils {
 					}
 					p.setC(Camp.evil);
 					sumofevil++;
-					if (sumofevil == 1) {
-						p.setPart(Part.morgana);
+					if(storage.isUsingMogana){
+						if (sumofevil == 1) {
+							p.setPart(Part.morgana);
+						}
 					}
+					if(storage.isUsingMordred){
+						if (sumofevil == 2) {
+							p.setPart(Part.mordred);
+						}
+					}
+					if(storage.isUsingOberyn&&storage.totalplayers>=7){
+						if (sumofevil == 3) {
+							p.setPart(Part.oberyn);
+						}
+					}
+
 
 				}
 
 				israndomed = true;
 
 			}
-			 System.out.println(name + " 你好!" + p.getC().toString()+p.getPart());
+			// System.out.println(name + " 你好!" + p.getC().toString()+p.getPart());
 
 		}
 

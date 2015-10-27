@@ -20,9 +20,10 @@ public class Main {
 		Storage storage=new Storage();
 		 print=new Print();
 		utils = new Utils(storage);
-		System.out.println("請輸入遊玩人數:5,6,7,8,9,10人");
+		
 		utils.initTotalPlayers();
-		System.out.println("現在開始分配正義或邪惡角色!");
+		utils.initUsingPart();
+		
 		utils.initPlayersNameAndAllocate();
 		int[] mission=utils.getMissionBoard();
 		
@@ -366,6 +367,7 @@ public class Main {
 
 	public static boolean voteresultandprint(ArrayList<Player> list) {
 		int denysum = 0;
+		int agreesum = 0;
 		for (Player p : list) {
 			System.out.print(p.getName() + ":");
 			if (!p.isAgree()) {
@@ -373,9 +375,10 @@ public class Main {
 				denysum++;
 			} else {
 				System.out.println("贊成");
+				agreesum++;
 			}
 		}
-		if (denysum >= 3) {
+		if (denysum >= agreesum) {
 			return false;
 		}
 		return true;
@@ -433,6 +436,16 @@ public class Main {
 				percivallookup(playerlist);
 			}
 		} else {
+			if (p.getPart()!=null){
+				if (p.getPart().equals(Part.oberyn)) {
+					System.out.println("你是奧伯倫 ;是壞人。但是不知道其他壞人是誰，也不會給其他壞人知道。");
+					return;
+				}
+				if (p.getPart().equals(Part.mordred)) {
+					System.out.println("你是莫德雷德。梅林不知道你");
+				}
+			}
+
 			evillookup(p,playerlist);
 			if(p.getPart()==null){
 				return;
@@ -448,7 +461,7 @@ public class Main {
 	}
 
 	private static void morganalookup(Player p, ArrayList<Player> playerlist) {
-		maylinlookup(p,playerlist);
+		maganalookup(p,playerlist);
 	}
 
 	private static void percivallookup(ArrayList<Player> playerlist) {	
@@ -456,11 +469,12 @@ public class Main {
 			if(np.getPart()==null){
 				continue;
 			}
+			System.out.println("他們是魔甘娜或梅林? :");
 			if (np.getPart().equals(Part.morgana)) {
-				System.out.println(np.getName() + ":" +Part.morgana.toString());
+				System.out.println(np.getName());
 			}
 			if (np.getPart().equals(Part.merlin)) {
-				System.out.println(np.getName() + ":" +Part.merlin.toString());
+				System.out.println(np.getName() );
 			}
 		}
 	}
@@ -469,16 +483,37 @@ public class Main {
 		System.out.println("你是壞人 你的邪惡夥伴是:");
 		for (Player p : playerlist) {
 			if (p.getC().equals(Camp.evil)) {
-
+				if(p.getPart()!=null){//壞人時看不到oberyn
+					if(p.getPart().equals(Part.oberyn)){
+						continue;
+					}
+				}
 				System.out.println(p.getName() + ":" + p.getC().toString());
 			}
 		}
 	}
 
 	public static void maylinlookup(Player maylin,ArrayList<Player> playerlist) {
-		
+		System.out.println("邪惡現形:");
 		for (Player p : playerlist) {
-			System.out.println(p.getName() + ":" + p.getC().toString());
+			if(p.getC().equals(Camp.evil)){
+				if(p.getPart()!=null){//梅林看壞人時看不到mordred
+					if(p.getPart().equals(Part.mordred)){
+						continue;
+					}
+				}
+				System.out.println(p.getName() + ":" + p.getC().toString());	
+			}
+			
+		}
+	}
+	public static void maganalookup(Player maylin,ArrayList<Player> playerlist) {
+		System.out.println("好人現形:");
+		for (Player p : playerlist) {
+			if(p.getC().equals(Camp.justice)){
+				System.out.println(p.getName() + ":" + p.getC().toString());	
+			}
+			
 		}
 	}
 
