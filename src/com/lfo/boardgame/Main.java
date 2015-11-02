@@ -128,6 +128,10 @@ public class Main {
 				System.out.println("不符合預期的輸入");
 				continue;
 			}
+			if(input>utils.getTotalPlayers()-1){
+				System.out.println("請選一位玩家號碼");
+				continue;
+			}
 			Player picked=utils.getPlayerBy(input);
 			if(!utils.isInlist(picked, list)){
 				System.out.println("提示:被查看過的玩家不能再被使用湖中女神能力了!");
@@ -242,7 +246,7 @@ public class Main {
 
 	
 	public static int nextking(int kingindex) {
-		if (kingindex == 4) {
+		if (kingindex == utils.getTotalPlayers()-1) {
 			kingindex = 0;
 		} else {
 			kingindex++;
@@ -485,9 +489,11 @@ public class Main {
 			
 			if (np.getPart().equals(Part.morgana)) {
 				System.out.println(np.getName());
+				continue;
 			}
 			if (np.getPart().equals(Part.merlin)) {
 				System.out.println(np.getName() );
+				continue;
 			}
 		}
 	}
